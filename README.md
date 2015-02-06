@@ -1,0 +1,2 @@
+# dingo
+dns pinger thingy

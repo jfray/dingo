@@ -48,10 +48,6 @@ func main() {
 		r.Value = serial
 		r = r.Next()
 
-		r.Do(func(x interface{}) {
-			fmt.Println(x)
-		})
-
 		if (oldSerial > 0) && (serial > oldSerial) {
 			fmt.Printf("Hey dude, we updated %d to %d", oldSerial, serial)
 			break
@@ -59,8 +55,7 @@ func main() {
 		if (*debug) {
         		fmt.Printf("My Serial Number is: %d & and its TTL is %d, previous serial was %d\n", serial, actualTtl, oldSerial)
 			fmt.Printf("Sleeping %d seconds\n", actualTtl)
-		}
-		if (*debug) {
+
 			ticker := time.NewTicker(time.Second * 1)
 		
 			go func() {

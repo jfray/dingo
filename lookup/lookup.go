@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/miekg/dns"
 	"os"
-	"time"
 )
 
 func GetSOA(domain string) (serial uint32, ttl uint32) {

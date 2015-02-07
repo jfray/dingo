@@ -17,13 +17,10 @@ func main() {
 	var oldSerial uint32
 
 	for {
-		serial, ttl := Lookup(os.Args[1])
+		serial, ttl := lookup.GetSOA(os.Args[1])
 		if (oldSerial > 0) && (serial > oldSerial) {
 			fmt.Printf("Hey dude, we updated %d to %d", oldSerial, serial)
-			host := fmt.Sprintf("www.%s", os.Args[1])
-			if checkRecord(host) {
-				fmt.Println("The new records are in")
-			}
+			break
 		}
         	fmt.Printf("My Serial Number is: %d & and its TTL is %d, previous serial was %d\n", serial, ttl, oldSerial)
 		fmt.Printf("Sleeping %d seconds\n", ttl)

@@ -2,19 +2,16 @@ package lookup
 
 import (
 	"fmt"
+	
 	"github.com/miekg/dns"
-	"os"
+	"github.com/jfray/dingo/conf"
 )
 
-func GetSOA(domain string) (serial uint32, ttl uint32) {
-	conf, err := dns.ClientConfigFromFile("/etc/resolv.conf")
-	if conf == nil {
-		fmt.Printf("Cannot initialize the local resolver: %s\n", err)
-		os.Exit(1)
-	}
+var (
+  nsAddressPort string = conf.Get("/etc/resolv.conf")
+)
 
-	nsAddressPort := fmt.Sprintf("%s:53", conf.Servers[0])
-
+func SOA(domain string) (serial uint32, ttl uint32) {
 	m := new(dns.Msg)
 	m.RecursionDesired = true
 	m.Question = make([]dns.Question, 1)
@@ -29,4 +26,29 @@ func GetSOA(domain string) (serial uint32, ttl uint32) {
 	ttl = in.Answer[0].(*dns.SOA).Minttl
 	
 	return serial, ttl
+}
+
+func getKey(domain string) *dns.DNSKEY {
+	//var keytag uint16
+	c := new(dns.Client)
+	m := new(dns.Msg)
+	m.SetQuestion(domain, dns.TypeDNSKEY)
+	m.SetEdns0(4096, true)
+	r, _, err := c.Exchange(m, nsAddressPort)
+	if err != nil {
+		return nil
+	}
+	for _, k := range r.Answer {
+		if k1, ok := k.(*dns.DNSKEY); ok {
+//			if k1.KeyTag() == keytag {
+			return k1
+//			}
+		}
+	}
+	return nil
+}
+
+func RRSIG(domain string) (values string) {
+	ret := fmt.Sprintf("Hey: %v", getKey(domain))
+	return ret
 }

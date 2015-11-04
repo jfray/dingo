@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/jfray/dingo/lookup"
+//	"github.com/jfray/dingo/store"
 )
 
 func main() {
@@ -23,7 +24,6 @@ func main() {
 		os.Exit(1)
 	}
 
-
 	r := ring.New(*ringSize)
 	r.Value = 0
 	r = r.Next()
@@ -31,7 +31,10 @@ func main() {
 	for {
 		var actualTtl uint32
 
-		serial, ttl := lookup.GetSOA(flag.Arg(0))
+		serial, ttl := lookup.SOA(flag.Arg(0))
+		
+		rr := lookup.RRSIG(flag.Arg(0))
+		fmt.Printf("Hey there: %s", rr)
 
 		if (*fakeTtl) {
 			actualTtl = uint32(*fakeTtlInterval)
